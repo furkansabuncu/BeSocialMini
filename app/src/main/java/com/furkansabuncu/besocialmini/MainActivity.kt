@@ -26,17 +26,30 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         //
 
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        val currentUser= auth.currentUser
+        if(currentUser!=null) {
+            val intent = Intent(this@MainActivity , FeedActivity::class.java)
         }
+
+
     }
     // Butonlar
     fun signInClicked(view : View ){
+        val email= binding.emailText.text.toString()
+        val pass= binding.passwordText.text.toString()
 
+        if(email!="" && pass !=""){
+            auth.signInWithEmailAndPassword(email,pass).addOnSuccessListener {
+                val intent = Intent(this@MainActivity, FeedActivity::class.java)
+                startActivity(intent)
+                finish()
+            }.addOnFailureListener {
+                Toast.makeText(this@MainActivity,it.localizedMessage,Toast.LENGTH_LONG).show()
+            }
+        }
+        else{
+            Toast.makeText(this@MainActivity,"please enter your email and password",Toast.LENGTH_LONG).show()
+        }
     }
 
     fun signUpClicked(view : View ){
